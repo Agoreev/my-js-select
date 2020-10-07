@@ -1,6 +1,3 @@
-import { Arrow } from "./arrow";
-import { OptionsList } from "./options-list";
-
 export class Select {
   constructor(selector, label, data, onSelect) {
     this.$el = document.querySelector(selector);
@@ -8,9 +5,6 @@ export class Select {
     this.data = data;
     this.selectedId = null;
     this.options = [];
-    this.opened = false;
-    this.optionsList = new OptionsList(this.options, null);
-    this.arrow = new Arrow();
     this.init();
   }
 
@@ -38,10 +32,20 @@ export class Select {
     this.$el.insertAdjacentHTML("beforeend", selTemplate);
   }
 
-  initializeSelect() {
-    this.optionsList.options = this.options;
-    const optionsList = this.optionsList.render();
-    const arrow = this.arrow.render();
+  renderSelect() {
+    const optionItmes = Object.keys(this.options)
+      .map(
+        (key) =>
+          `<div class="option" selected="${
+            this.selectedId === key
+          }" data-id="${key}">${this.options[key].label}</div>`
+      )
+      .join("");
+
+    const optionsList = `<div class="options-list">${optionItmes}</div>`;
+
+    const arrow = `<span class="select-arrow">▼</span>`;
+
     const selectInput = `<div class="select-input">${
       this.selectedId ? this.options.selectedId.label : "Выберите технологию"
     } ${arrow}</div>`;
@@ -51,6 +55,6 @@ export class Select {
   onSelect(selectedId) {}
 
   onSelectToggle() {
-    this.opened = true;
+    this.$el.classList.add("opened");
   }
 }
